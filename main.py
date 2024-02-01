@@ -27,9 +27,9 @@ def sending_data_test():
     final_address = address[1][:-3]
     google_map_link = generate_google_maps_link(final_address)
 
-    print("sending -> " + google_map_link)
+    print("sending alert for " + message + " | GMaps: " + google_map_link)
 
-    requests.post("http://192.168.0.92/test",
+    requests.post("https://ntfy.sh/911Alerts",
                   data=message.encode(encoding='utf-8'),
                   headers={"Click": f"{google_map_link}"})
 

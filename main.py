@@ -1,34 +1,37 @@
 import feedparser
 import requests
-from discord_webhook import DiscordWebhook
 
-xml_url = 'https://www.monroecounty.gov/incidents911.rss'
+rss_url = 'https://www.monroecounty.gov/incidents911.rss'
 
 webhook_url = 'https://discordapp.com/api/webhooks/1202388231430357032/88n4s0oek0rf1XrCLu9BJn7lnGJfNdospM7Gm_mubuUdf7kRI4GjS5gdg2dzkdF3QjMd'
 
-feed = feedparser.parse(xml_url)
+feed = feedparser.parse(rss_url)
 
 
-def parse():
-    # for entry in feed['entries']:
-    #     print(entry)
+def refresh():
+    # feed = feedparser.parse(rss_url)
 
-    print(feed.entries[0]['title'])
-
-
-def test_webhook():
-    message = 'testing webhook!'
-    webhook = DiscordWebhook(url=webhook_url, content=message)
-    webhook.execute()
+    print(feed.entries[0].title)
 
 
-def test_ntfy():
-    requests.post("http://192.168.0.92/test", data="test message!".encode(encoding='utf-8'))
+def generate_google_maps_link(address):
+    base_url = "https://maps.google.com/?q="
+    formatted_address = "+".join(address.split())
+    search_link = base_url + formatted_address
+    return search_link
 
 
 def sending_data_test():
     message = feed.entries[0]['title']
-    requests.post("http://192.168.0.92/test", data=message.encode(encoding='utf-8'))
+    address = message.split("at")
+    final_address = address[1][:-3]
+    google_map_link = generate_google_maps_link(final_address)
+
+    print("sending -> " + google_map_link)
+
+    requests.post("http://192.168.0.92/test",
+                  data=message.encode(encoding='utf-8'),
+                  headers={"Click": f"{google_map_link}"})
 
 
 if __name__ == '__main__':

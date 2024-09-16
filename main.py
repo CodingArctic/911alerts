@@ -11,25 +11,25 @@ feed = feedparser.parse(rss_url)
 def refresh():
     # feed = feedparser.parse(rss_url)
 
-    print(feed.entries[0].title)
+    print(feed.entries[0])
 
 
-def generate_google_maps_link(address):
-    base_url = "https://maps.google.com/?q="
-    formatted_address = "+".join(address.split())
-    search_link = base_url + formatted_address
+def generate_google_maps_link(lat, long):
+    base_url = "https://www.google.com/maps/search/?api=1&query="
+    search_link = base_url + lat + "," + long
     return search_link
 
 
 def sending_data_test():
     message = feed.entries[0]['title']
     address = message.split("at")
-    final_address = address[1][:-3]
-    google_map_link = generate_google_maps_link(final_address)
+    lat = feed.entries[0]['geo_lat']
+    long = feed.entries[0]['geo_long']
+    google_map_link = generate_google_maps_link(lat, long)
 
     print("sending -> " + google_map_link)
 
-    requests.post("http://192.168.0.92/test",
+    requests.post("http://ntfy.sh/911Alerts",
                   data=message.encode(encoding='utf-8'),
                   headers={"Click": f"{google_map_link}"})
 

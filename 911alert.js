@@ -144,10 +144,7 @@ async function ticker() {
 }
 
 async function start() {
-    while (true) {
-        ticker();
-        setTimeout(() => {}, 60000)
-    }
+    setInterval(ticker, 60000)
 }
 
 start();
